@@ -3,8 +3,7 @@
     <goods-list-item 
     v-for="(item, index) in goodsList"
     :goods='item' 
-    :key="index">
-    </goods-list-item>
+    :key="index"/>
   </grid-view>
 </template>
 
@@ -18,6 +17,7 @@
       GridView,
       GoodsListItem
     },
+    //props在data之前被创建
     props: {
       goodsList: {
         type: Array,

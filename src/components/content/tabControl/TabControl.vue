@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <div class="tab-control">
-      <div class="tab-control-item"
-          v-for="(item,index) in titles"
-          :key="index"
-          :class="{active: index === currentIndex}"
-          @click="itemClick(index)">
-        <span>{{item}}</span>
-      </div>
+  <div class="tab-control">
+    <div class="tab-control-item"
+        v-for="(item,index) in titles"
+        :key="index"
+        :class="{active: index === currentIndex}"
+        @click="itemClick(index)">
+      <span>{{item}}</span>
     </div>
   </div>
 </template>
@@ -41,6 +39,10 @@
 <style scoped>
   .tab-control{
     display: flex;
+    font-size: 15px;
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
   }
 
   .tab-control-item{

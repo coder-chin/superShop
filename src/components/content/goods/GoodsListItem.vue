@@ -4,7 +4,7 @@
     <div class="goods-info">
       <p>{{goods.title}}</p>
       <span class="price">¥{{goods.price}}</span>
-      <span class="collect">¥{{goods.cfav}}</span>
+      <span class="collect">{{goods.cfav}}</span>
     </div>
   </div>
 </template>
@@ -35,6 +35,7 @@
   }
   .goods img {
     width: 100%;
+    border-radius: 5px;
   }
   .goods-info {
     font-size: 12px;
@@ -46,6 +47,7 @@
     text-align: center;
   }
   .goods-info p {
+    /* 下面三行代码实现省略效果，隐藏+省略号+不换行 */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -65,6 +67,6 @@
     top: 0;
     width: 14px;
     height: 14px;
-    background: url("~assets/img/common/collect.svg") 0 1/14px 14px;
+    background: url("~assets/img/common/collect.svg") 0 0/14px 14px;
   }
 </style>
