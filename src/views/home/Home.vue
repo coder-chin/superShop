@@ -114,6 +114,7 @@ export default {
     loadMore() {
       this.getHomeProducts(this.currentType)
     },
+    //1. vuex状态管理  2. bus总线  
   },
 };
 </script>
