@@ -1,20 +1,23 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+    <tab-control class="fixed" :titles="['流行', '新款', '精选']"
+    @itemClick="tabClick" v-show="isTabFixed" ref="tabcontrol"></tab-control>
     <scroll
       class="content"
       ref="scroll"
       :pull-up-load="true"
       :probe-type="3"
+      :goods='showGoodsList'
       @scroll="contentScroll"
       @pullingUp="loadMore">
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper :banners="banners" ref="swiper"></home-swiper>
       <recommend-view :recommends="recommends"></recommend-view>
       <feature-view></feature-view>
       <tab-control
-        class="tab-control"
         :titles="['流行', '新款', '精选']"
-        @itemClick="tabClick">
+        @itemClick="tabClick"
+        ref="tabControl">
       </tab-control>
       <goods-list :goods-list="showGoodsList"></goods-list>
     </scroll>
@@ -59,6 +62,9 @@ export default {
         sell: { page: 1, list: [] },
       },
       isShowBackToTop: false,
+      isTabFixed: false,
+      tabOffsetTop: 0,
+      leaveY: 0,
     };
   },
   computed: {
@@ -69,11 +75,19 @@ export default {
   created() {
     //请求轮播图、推荐数据
     this.getMultidata();
-
     //请求流行、新款、精选数据
     this.getHomeProducts(POP);
     this.getHomeProducts(NEW);
     this.getHomeProducts(SELL);
+  },
+  mounted() {
+    // console.log(this.$refs.swiper);
+  },
+  activated() {
+    // this.$refs.swiper.startTimer()  为什么找不到
+  },
+  deactivated() {
+    // this.$refs.swiper.stopTimer()
   },
   methods: {
     tabClick(index) {
@@ -88,8 +102,12 @@ export default {
           this.currentType = SELL;
           break;
       }
+      //scroll外卖的tabcontrol，小写
+      this.$refs.tabcontrol.currentIndex = index
+      this.$refs.tabControl.currentIndex = index
     },
     contentScroll(position) {
+      this.isTabFixed = position.y < -this.tabOffsetTop
       this.isShowBackToTop = -position.y > 1000;
     },
     backClick() {
@@ -101,6 +119,9 @@ export default {
       getHomeMultidata().then((res) => {
         this.banners = res.data[BANNER].list;
         this.recommends = res.data[RECOMMEND].list;
+        this.$nextTick(() => {
+          this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+        })
       });
     },
     getHomeProducts(type) {
@@ -108,6 +129,7 @@ export default {
         const goodsList = res.data.list;
         this.goodsList[type].list.push(...goodsList);
         this.goodsList[type].page += 1;
+
         this.$refs.scroll.finishPullUp()
       });
     },
@@ -127,23 +149,27 @@ export default {
   .home-nav {
     background-color: var(--color-tint);
     color: #fff;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    z-index: 999;
+    position: relative;
+    z-index: 99;
   }
-  .tab-control {
+  /* 失效 */
+  /* .tab-control {
     position: sticky;
     top: 44px;
     z-index: 999;
-  }
+  } */
   .content {
-    overflow: hidden;
     position: absolute;
     top: 44px;
     bottom: 0;
     left: 0;
     right: 0;
+  }
+  .fixed{
+    position: fixed;
+    top: 44px;
+    left: 0;
+    right: 0;
+    z-index: 99;
   }
 </style>
