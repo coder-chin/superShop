@@ -7,7 +7,7 @@ export default function axios(option) {
 		const instance = originAxios.create({
 			baseURL: 'http://152.136.185.210:7878/api/m5',
 			timeout: 5000
-		});
+		})
 
 		// 配置请求和响应拦截
 		instance.interceptors.request.use(config => {
@@ -26,7 +26,7 @@ export default function axios(option) {
 
 		instance.interceptors.response.use(response => {
 			// console.log('来到了response拦截success中');
-			return response.data
+			return response.data  //直接返回data内容
 		}, err => {
 			console.log('来到了response拦截failure中');
       console.log(err);

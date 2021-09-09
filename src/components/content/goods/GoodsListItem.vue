@@ -1,5 +1,5 @@
 <template>
-  <div class="goods">
+  <div class="goods" @click="itemClick">
     <img v-lazy='getImg' :key="getImg">
     <div class="goods-info">
       <p>{{goods.title}}</p>
@@ -23,6 +23,14 @@
     computed: {
       getImg() {
         return this.goods.img || this.goods.image || this.goods.show.img
+      }
+    },
+    methods: {
+      itemClick() {
+        this.$router.push({
+          path: '/detail',
+          query: {id: this.goods.iid}
+        })
       }
     }
   }
