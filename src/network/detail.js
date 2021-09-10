@@ -15,6 +15,7 @@ export function getRecommend() {
   })
 }
 
+//ES6类
 export class Goods {
   constructor(itemInfo, columns, services) {
     this.title = itemInfo.title;

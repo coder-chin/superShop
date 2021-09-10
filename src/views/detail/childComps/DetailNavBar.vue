@@ -6,7 +6,7 @@
         <span class="title-item"
         v-for="(item, index) in titleInfos"
         :key="index"
-        :class="{'active': index===currentIndex}"
+        :class="{'title-item-active': index===currentIndex}"
         @click="itemClick(index)">{{item}}
         </span>
       </div>
@@ -47,6 +47,8 @@
 <style scoped>
   .detail-nav{
     background-color: #fff;
+    position: relative;
+    z-index: 99;
   }
   .back{
     margin-top: 12px;
