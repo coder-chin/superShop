@@ -38,6 +38,7 @@ import FeatureView from "./childComps/FeatureView";
 
 import { getHomeMultidata, getHomeData, RECOMMEND, BANNER } from "network/home";
 import { NEW, POP, SELL, BACKTOP_DISTANCE } from "common/const";
+import { tabControlMixin } from "common/mixin";
 
 export default {
   name: "Home",
@@ -51,11 +52,11 @@ export default {
     Scroll,
     BackToTop
   },
+  mixins: [tabControlMixin],
   data() {
     return {
       banners: [],
       recommends: [],
-      currentType: POP,
       goodsList: {
         pop: { page: 1, list: [] },
         new: { page: 1, list: [] },
@@ -90,31 +91,15 @@ export default {
     // this.$refs.swiper.stopTimer()
   },
   methods: {
-    tabClick(index) {
-      switch (index) {
-        case 0:
-          this.currentType = POP;
-          break;
-        case 1:
-          this.currentType = NEW;
-          break;
-        case 2:
-          this.currentType = SELL;
-          break;
-      }
-      //scroll外卖的tabcontrol，小写
-      this.$refs.tabcontrol.currentIndex = index
-      this.$refs.tabControl.currentIndex = index
-    },
     contentScroll(position) {
       this.isTabFixed = position.y < -this.tabOffsetTop
-      this.isShowBackToTop = -position.y > 1000;
+      this.isShowBackToTop = -position.y > BACKTOP_DISTANCE;
     },
     backClick() {
       this.$refs.scroll.scrollTo(0, 0, 500)
     },
 
-    // 网络请求相关
+    // 网络请求相关, 放到最后比较好
     getMultidata() {
       getHomeMultidata().then((res) => {
         this.banners = res.data[BANNER].list;

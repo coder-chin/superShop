@@ -2,15 +2,22 @@
   <div id="detail">
     <detail-nav-bar @itemClick='titleClick' :current-index='currentIndex'></detail-nav-bar>
     <scroll class="content"
-      :pullUpLoad='true'>
-        <!-- <detail-swiper :imageList='topImages'/>
+      ref="scroll"
+      @scroll="contentScroll"
+      :detail="[topImages, goods, shop, detailInfo, paramInfo, commentInfo, recommendList]"
+      :probe-type="3" :pull-up-load='true'>
+        <detail-swiper ref='base' :imageList='topImages'/>
         <detail-base-info :goods='goods'/>
         <detail-shop-info :shop='shop'/>
         <detail-goods-info :detailInfo='detailInfo'/>
-        <detail-param-info :paramInfo='paramInfo'/> -->
-        <detail-comment-info :commentInfo='commentInfo'/>
+        <detail-param-info ref='param' :paramInfo='paramInfo'/> 
+        <detail-comment-info ref='comment' :commentInfo='commentInfo'/>
+        <detail-recommend-info ref='recommend' :recommendList='recommendList'/>
     </scroll>
-    
+    <back-to-top v-show="showBackTop" class="back-to-top" @click.native="toTop">
+      <img src="~assets/img/common/top.png" alt="">
+    </back-to-top>
+    <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
   </div>
 </template>
 
@@ -24,8 +31,14 @@
   import DetailGoodsInfo from './childComps/DetailGoodsInfo'
   import DetailParamInfo from './childComps/DetailParamInfo'
   import DetailCommentInfo from './childComps/DetailCommentInfo'
+  import DetailRecommendInfo from './childComps/DetailRecommendInfo'
+  import DetailBottomBar from './childComps/DetailBottomBar'
+
+  import BackToTop from 'components/common/backToTop/BackToTop'
 
   import {getDetail, getRecommend, Goods, Shop, GoodsParam} from 'network/detail'
+  import {backTopMixin} from 'common/mixin'
+
   export default {
     name: 'Detail',
     components: {
@@ -37,7 +50,11 @@
       DetailGoodsInfo,
       DetailParamInfo,
       DetailCommentInfo,
+      DetailRecommendInfo,
+      BackToTop,
+      DetailBottomBar
     },
+    mixins: [backTopMixin],
     data() {
       return {
         id: null,
@@ -48,6 +65,8 @@
         detailInfo: {},
         paramInfo: {},
         commentInfo: {},
+        recommendList: [],
+        themeTops: [],
       }
     },
     created() {
@@ -55,7 +74,52 @@
       this.getDetailData()
       this.getRecommendData()
     },
+    //拿到值以后还需要渲染
+    updated() {
+		  // 数据变化时获取需要的四个offsetTop
+      this._getOffsetTops()
+    },
     methods: {
+      //获取offsetTop
+      _getOffsetTops() {
+		    this.themeTops = []  //每次都置空
+        this.themeTops.push(this.$refs.base.$el.offsetTop)
+        this.themeTops.push(this.$refs.param.$el.offsetTop)
+        this.themeTops.push(this.$refs.comment.$el.offsetTop)
+        this.themeTops.push(this.$refs.recommend.$el.offsetTop)
+        this.themeTops.push(Number.MAX_VALUE)
+      },
+      titleClick(index) {
+        console.log(index);
+        this.currentIndex = index
+        this.$refs.scroll.scrollTo(0, -this.themeTops[index], 200)
+      },
+      contentScroll(position) {
+        this.showBackTop = position.y < -1000
+        this._listenScrollTheme(-position.y)
+      },
+      _listenScrollTheme(position) {
+        let length = this.themeTops.length;
+        for (let i = 0; i < length; i++) {
+          let iPos = this.themeTops[i];
+          if (position >= iPos && position < this.themeTops[i+1]) {
+            if (this.currentIndex !== i) {
+              this.currentIndex = i;
+            }
+            break;
+          }
+        }
+      },
+      addToCart() {
+        const product = {}
+        product.iid = this.iid
+        product.imgURL = this.topImages[0]
+        product.title = this.goods.title
+        product.desc = this.goods.desc
+        product.newPrice = this.goods.nowPrice
+        this.$store.dispatch('addCart', product)
+      },
+
       //获取详情页数据
       getDetailData() {
         getDetail(this.id).then( res => {
@@ -77,14 +141,6 @@
           this.recommendList = res.data.list
         })
       },
-      titleClick(index) {
-        console.log(index);
-        this.currentIndex = index
-      },
-      contentScroll(position) {
-        this.showBackTop = position < -1000
-        this._listenScrollTheme(-position.y)
-      }
     }
   }
 </script>
@@ -98,6 +154,11 @@
   }
   .content{
     background-color: #fff;
-    height: calc(100% - 44px);
+    height: calc(100% - 102px);
+  }
+  .back-to-top{
+    position: fixed;
+    bottom: 65px;
+    right: 10px;
   }
 </style>
