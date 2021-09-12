@@ -112,12 +112,17 @@
       },
       addToCart() {
         const product = {}
-        product.iid = this.iid
+        product.iid = this.id
         product.imgURL = this.topImages[0]
         product.title = this.goods.title
         product.desc = this.goods.desc
         product.newPrice = this.goods.nowPrice
-        this.$store.dispatch('addCart', product)
+        this.$store.dispatch('addCart', product).then(res => {
+          this.$toast.show()
+        })
+
+        // dispatch返回promise
+
       },
 
       //获取详情页数据
