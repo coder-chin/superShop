@@ -5,7 +5,7 @@ export default function axios(option) {
 	return new Promise((resolve, reject) => {
 		// 1.创建axios的实例
 		const instance = originAxios.create({
-			baseURL: 'http://152.136.185.210:7878/api/m5',
+			baseURL: 'http://152.136.185.210:7878/api/hy66',
 			timeout: 5000
 		})
 
@@ -29,8 +29,8 @@ export default function axios(option) {
 			return response.data  //直接返回data内容
 		}, err => {
 			console.log('来到了response拦截failure中');
-      console.log(err);
-      if (err && err.response) {
+			console.log(err);
+			if (err && err.response) {
 				switch (err.response.status) {
 					case 400:
 						err.message = '请求错误'

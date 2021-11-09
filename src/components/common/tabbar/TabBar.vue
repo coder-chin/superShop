@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style scoped>
-  #tab-bar{
+  #tab-bar {
     position: fixed;
     left: 0;
     right: 0;
